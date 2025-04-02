@@ -1,6 +1,5 @@
 import crypto from 'crypto';
 import fs from 'fs/promises';
-import path from 'path';
 
 const algorithm = 'aes-256-cbc';
 
@@ -13,16 +12,16 @@ const args = process.argv.slice(2).reduce((acc, arg) => {
   return acc;
 }, {});
 
-const { text, outputFile = 'encrypted.txt', key: providedKey, iv: providedIv } = args;
+const { text, outputFile = 'encrypted.json' } = args;
 
 if (!text) {
   console.error('🚨 Missing text argument');
   process.exit(1);
 }
 
-// Generate or use provided key and IV
-const key = providedKey ? Buffer.from(providedKey, 'hex') : crypto.randomBytes(32);
-const iv = providedIv ? Buffer.from(providedIv, 'hex') : crypto.randomBytes(16);
+// Generate key and IV
+const key = crypto.randomBytes(32);
+const iv = crypto.randomBytes(16);
 
 console.log(`Algorithm: ${algorithm}`);
 console.log(`Key: ${key.toString('hex')}`);

@@ -1,58 +1,94 @@
-# Node Encryption / Decryption example
+# Node Crypto Encryption Example
 
-An example script to show how to encrypt & decrypt text using the [Node Crypto module](https://nodejs.org/api/crypto.html)
+An example script to show how to encrypt & decrypt using the Node Crypto module.
 
-## Arguments
+## Prerequisites
 
-- `algorithm=` - if not passed will default to `aes-256-cbc`. Different algorithms (`aes-128-ecb` for example) will require different `key` & `iv` lengths so they will need to be passed appropriately.
-- `key=` - the encryption key, if not passed the script will make one with `crypto.randomBytes(32)`
-- `iv=` - the initialisation vector, if not passed the script will make one with `crypto.randomBytes(16)`
-- `text=` - the plaintext or cipher text which will be encrypted or decrypted
+- Node.js v23.11.0 or higher
+- npm (Node Package Manager)
 
-## Encrypt
+## Installation
 
-To encrypt:
-
+1. Clone the repository:
 ```bash
-npm run encrypt
+git clone https://github.com/joepagan/node-crypto-encryption-example.git
+cd node-crypto-encryption-example
 ```
 
-Will in turn run:
-
+2. Install dependencies:
 ```bash
-node crypto.js method=encrypt text=EPSTEIN-DID-NOT-KILL-HIMSELF
+npm install
 ```
 
-Outputs:
+## Usage
 
+### Basic Encryption/Decryption
+
+To encrypt text:
 ```bash
-Key: 9c619c24e7c7600d91268298488a70df5e5a9b2b7cfaecae798d6ac8e9e24312
-Initialisation Vector: 7cdc3b416ac7950c400b28cca4389327
-Text: EPSTEIN-DID-NOT-KILL-HIMSELF
-Method: encrypt
-Encrypted data: 18e051e9d565bfef472e5c60cbe31e4766ef489e8c53756001dde8b61cacdbf0
+npm run encrypt text="Your text to encrypt"
 ```
 
-## Decrypt
-
-To encrypt:
-
+To decrypt text:
 ```bash
-npm run decrypt
+npm run decrypt key="your-key" iv="your-iv" text="encrypted-text"
 ```
 
-Will in turn run:
+### File-Based Encryption/Decryption
 
+To encrypt text and save it to a file:
 ```bash
-node crypto.js method=decrypt key=9c619c24e7c7600d91268298488a70df5e5a9b2b7cfaecae798d6ac8e9e24312 iv=7cdc3b416ac7950c400b28cca4389327 text=18e051e9d565bfef472e5c60cbe31e4766ef489e8c53756001dde8b61cacdbf0
+npm run encrypt-file text="Your secret message" outputFile="secret.json"
 ```
 
-Outputs:
+This will:
+- Generate a secure random key and IV
+- Encrypt your text
+- Save it to the specified file (defaults to 'encrypted.json')
+- Display the key that you'll need for decryption
+- Store the IV and algorithm information in the file
 
+To decrypt text from a file:
 ```bash
-Key: 9c619c24e7c7600d91268298488a70df5e5a9b2b7cfaecae798d6ac8e9e24312
-Initialisation Vector: 7cdc3b416ac7950c400b28cca4389327
-Text: 18e051e9d565bfef472e5c60cbe31e4766ef489e8c53756001dde8b61cacdbf0
-Method: decrypt
-Decrypted data: EPSTEIN-DID-NOT-KILL-HIMSELF
+npm run decrypt-file inputFile="secret.json" key="your-key-from-encryption"
 ```
+
+This will:
+- Read the encrypted file
+- Use the provided key to decrypt the content
+- Display the decrypted text
+
+## Example
+
+1. Encrypt text to a file:
+```bash
+npm run encrypt-file text="This is a secret message" outputFile="secret.json"
+```
+
+2. The script will output the key - save this!
+```
+Algorithm: aes-256-cbc
+Key: 1234... (save this key!)
+Initialisation Vector: 5678...
+Text: This is a secret message
+Output file: secret.json
+✅ Successfully encrypted and saved to secret.json
+🔑 Key (save this for decryption): 1234...
+```
+
+3. Decrypt using the key:
+```bash
+npm run decrypt-file inputFile="secret.json" key="1234..."
+```
+
+## Notes
+
+- The encrypted file is stored in JSON format containing the encrypted data, IV, and algorithm information
+- A secure random key is generated automatically for each encryption
+- The key must be saved securely as it's required for decryption
+- The IV (Initialization Vector) is stored in the encrypted file for convenience
+- The default encryption algorithm is AES-256-CBC
+
+## License
+
+ISC

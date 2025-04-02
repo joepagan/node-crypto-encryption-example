@@ -10,6 +10,8 @@
   "scripts": {
     "encrypt": "node crypto.js method=encrypt text=EPSTEIN-DID-NOT-KILL-HIMSELF",
     "decrypt": "node crypto.js method=decrypt key=9c619c24e7c7600d91268298488a70df5e5a9b2b7cfaecae798d6ac8e9e24312 iv=7cdc3b416ac7950c400b28cca4389327 text=18e051e9d565bfef472e5c60cbe31e4766ef489e8c53756001dde8b61cacdbf0",
+    "encrypt-file": "node encrypt-to-file.js text=YOUR-TEXT-HERE outputFile=encrypted.json",
+    "decrypt-file": "node decrypt-from-file.js inputFile=encrypted.json key=YOUR-KEY-HERE",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
