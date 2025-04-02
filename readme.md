@@ -38,7 +38,7 @@ npm run decrypt key="your-key" iv="your-iv" text="encrypted-text"
 
 To encrypt text and save it to a file:
 ```bash
-npm run encrypt-file text="Your secret message" outputFile="secret.json"
+npm run encrypt-file text="Your secret message" outputFile="encrypted.json"
 ```
 
 This will:
@@ -50,7 +50,7 @@ This will:
 
 To decrypt text from a file:
 ```bash
-npm run decrypt-file inputFile="secret.json" key="your-key-from-encryption"
+npm run decrypt-file inputFile="encrypted.json" key="your-key-from-encryption"
 ```
 
 This will:
@@ -62,7 +62,7 @@ This will:
 
 1. Encrypt text to a file:
 ```bash
-npm run encrypt-file text="This is a secret message" outputFile="secret.json"
+npm run encrypt-file text="This is a secret message" outputFile="encrypted.json"
 ```
 
 2. The script will output the key - save this!
@@ -71,14 +71,14 @@ Algorithm: aes-256-cbc
 Key: 1234... (save this key!)
 Initialisation Vector: 5678...
 Text: This is a secret message
-Output file: secret.json
-✅ Successfully encrypted and saved to secret.json
+Output file: encrypted.json
+✅ Successfully encrypted and saved to encrypted.json
 🔑 Key (save this for decryption): 1234...
 ```
 
 3. Decrypt using the key:
 ```bash
-npm run decrypt-file inputFile="secret.json" key="1234..."
+npm run decrypt-file inputFile="encrypted.json" key="1234..."
 ```
 
 ## Notes
