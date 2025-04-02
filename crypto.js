@@ -1,63 +1,71 @@
-var crypto = require('crypto');
-let algorithm = 'aes-256-cbc';
+import crypto from 'crypto';
 
-let key = crypto.randomBytes(32);
-let iv = crypto.randomBytes(16);
-let text, method;
+const algorithm = 'aes-256-cbc';
 
-process.argv.forEach(function (arg, index, array) {
-  if(arg.includes('method=')) {
-    method = arg.replace('method=', '');
+// Parse command line arguments
+const args = process.argv.slice(2).reduce((acc, arg) => {
+  const [key, value] = arg.split('=');
+  if (key && value) {
+    acc[key] = value;
   }
-  if(arg.includes('key=')) {
-    key = arg.replace('key=', '');
-  }
-  if(arg.includes('iv=')) {
-    iv = arg.replace('iv=', '');
-  }
-  if(arg.includes('text=')) {
-    text = arg.replace('text=', '');
-  }
-  if(arg.includes('algorithm=')) {
-    algorithm = arg.replace('algorithm=', '');
-  }
-});
+  return acc;
+}, {});
+
+const { method, key: providedKey, iv: providedIv, text, algorithm: providedAlgorithm } = args;
 
 if (!text) {
   console.error('🚨 Missing text argument');
-  process.exit();
+  process.exit(1);
 }
 
-console.log(`Algorithm: ${algorithm}`);
+// Generate or use provided key and IV
+const key = providedKey ? Buffer.from(providedKey, 'hex') : crypto.randomBytes(32);
+const iv = providedIv ? Buffer.from(providedIv, 'hex') : crypto.randomBytes(16);
+const finalAlgorithm = providedAlgorithm || algorithm;
+
+console.log(`Algorithm: ${finalAlgorithm}`);
 console.log(`Key: ${key.toString('hex')}`);
 console.log(`Initialisation Vector: ${iv.toString('hex')}`);
 console.log(`Text: ${text}`);
 console.log(`Method: ${method}`);
 
 const encrypt = () => {
-  let cipher = crypto.createCipheriv(algorithm, Buffer.from(key), iv);
-  let encrypted = cipher.update(text);
-  encrypted = Buffer.concat([encrypted, cipher.final()]);
-  console.log(`Encrypted data: ${encrypted.toString('hex')}`);
+  try {
+    const cipher = crypto.createCipheriv(finalAlgorithm, key, iv);
+    const encrypted = Buffer.concat([
+      cipher.update(text),
+      cipher.final()
+    ]);
+    console.log(`Encrypted data: ${encrypted.toString('hex')}`);
+  } catch (error) {
+    console.error('🚨 Encryption failed:', error.message);
+    process.exit(1);
+  }
 };
 
 const decrypt = () => {
-  // Set the ciphertext as a buffer
-  let cipherText = Buffer.from(text, 'hex');
-  // Make sure key is the correct length, converting string (hex) to buffer
-  key = Buffer.from(key, 'hex');
-  // Make sure IV is the correct length, converting string (hex) to buffer
-  iv = Buffer.from(iv, 'hex');
-  let decipher = crypto.createDecipheriv(algorithm, Buffer.from(key), iv);
-  let decrypted = decipher.update(cipherText);
-  decrypted = Buffer.concat([decrypted, decipher.final()]);
-  console.log(`Decrypted data: ${decrypted.toString()}`);
+  try {
+    const cipherText = Buffer.from(text, 'hex');
+    const decipher = crypto.createDecipheriv(finalAlgorithm, key, iv);
+    const decrypted = Buffer.concat([
+      decipher.update(cipherText),
+      decipher.final()
+    ]);
+    console.log(`Decrypted data: ${decrypted.toString()}`);
+  } catch (error) {
+    console.error('🚨 Decryption failed:', error.message);
+    process.exit(1);
+  }
 };
 
-if (method === 'encrypt') {
-  encrypt();
-}
-
-if (method === 'decrypt') {
-  decrypt();
+switch (method) {
+  case 'encrypt':
+    encrypt();
+    break;
+  case 'decrypt':
+    decrypt();
+    break;
+  default:
+    console.error('🚨 Invalid method. Use "encrypt" or "decrypt"');
+    process.exit(1);
 }
